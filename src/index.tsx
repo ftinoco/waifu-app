@@ -2,7 +2,9 @@ import { ColorModeScript } from "@chakra-ui/react"
 import * as React from "react"
 import * as ReactDOM from "react-dom/client"
 import { App } from "./App"
+import { DataProvider } from "./context"
 import reportWebVitals from "./reportWebVitals"
+import { ServiceProvider } from "./services"
 import * as serviceWorker from "./serviceWorker"
 
 
@@ -12,8 +14,12 @@ const root = ReactDOM.createRoot(container)
 
 root.render(
   <React.StrictMode>
-    <ColorModeScript />
-    <App />
+    <ServiceProvider>
+      <DataProvider>
+        <ColorModeScript />
+        <App />
+      </DataProvider>
+    </ServiceProvider>
   </React.StrictMode>,
 )
 

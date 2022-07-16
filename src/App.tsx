@@ -17,7 +17,7 @@ import { Filter } from "./components/filter.component"
 export const App = () => (
   <ChakraProvider theme={theme}>
     <Box textAlign="center">
-      <Grid minH="100vh" p={3}>
+      <Grid p={3}>
         <ColorModeSwitcher justifySelf="flex-end" />
         <Filter />
         <Random />

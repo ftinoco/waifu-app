@@ -11,7 +11,8 @@ export const Random = () => {
         orientation,
         isNSFW,
         isGIF,
-        many
+        many,
+        selectedTags
     } = useContext(DataContext);
 
     const {
@@ -19,14 +20,13 @@ export const Random = () => {
     } = useContext(ServiceContext);
 
     useEffect(() => {
-        const apiProps = {
+        getRandomImage({
             orientation,
             isNSFW,
             isGIF,
-            many
-        } as IFilterProps;
-
-        getRandomImage(apiProps).then((res) => {
+            many,
+            selectedTags
+        } as IFilterProps).then((res) => {
             const response = res as any;
             setImages(response.images);
             console.log(response.images);
@@ -35,7 +35,8 @@ export const Random = () => {
         orientation,
         isNSFW,
         isGIF,
-        many
+        many,
+        selectedTags
     ]);
 
 

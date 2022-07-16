@@ -1,18 +1,34 @@
 import {
-    Box, Center,
+    ChangeEvent,
+    Dispatch,
+    MutableRefObject,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useRef,
+    useState
+} from "react";
+import {
+    Center,
     Checkbox, Flex,
     FormControl,
     FormLabel,
-    Input, Select,
-    Square,
-    Stack
+    Stack,
+    useDisclosure
 } from "@chakra-ui/react";
-import { ChangeEvent, MutableRefObject, useContext, useRef } from "react";
+import { Select as SingleSelect } from "@chakra-ui/react";
+import { GroupBase, MultiValue, Select } from "chakra-react-select";
 import { DataContext } from "../context";
-import { OrientationType } from "../utils/interfaces";
+import { ServiceContext } from "../services";
+import { IGroupedOptions, IOption, OrientationType } from "../utils/interfaces";
+import { NSFWConfirm } from "./nsfw.confirm.component";
 
 export const Filter = () => {
+    const { getTags } = useContext(ServiceContext);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [groupedTags, setGroupedTags] = useState([] as IGroupedOptions[]);
     const {
+        isNSFW,
         setIsNSFW,
         setIsGIF,
         setMany,
@@ -21,52 +37,60 @@ export const Filter = () => {
         setExcludedTags
     } = useContext(DataContext);
 
-    const tagRef = useRef() as MutableRefObject<HTMLSelectElement>;
-    const orientationRef = useRef() as MutableRefObject<HTMLSelectElement>; 
+    useEffect(() => {
+        getTags(isNSFW).then((res) => {
+            setGroupedTags(res);
+        });
+    }, [isNSFW]);
 
-    const onSelectTag = () =>
-        setSelectedTags((prevValue) => [...prevValue, tagRef.current.value]);
+    const orientationRef = useRef() as MutableRefObject<HTMLSelectElement>;
+
+    const onSelectTag = (newValue: MultiValue<IOption>) =>
+        setSelectedTags(newValue.map((x) => x.value));
 
     const onSelectOrientation = () =>
         setOrientation(orientationRef.current.value as OrientationType);
 
-    const onCheckedNSFW = (e: ChangeEvent<HTMLInputElement>) => 
-        setIsNSFW(e.target.checked); 
-
-    const onCheckedGIF = (e: ChangeEvent<HTMLInputElement>) =>
-        setIsGIF(e.target.checked);
-
-    const onCheckedMany = (e: ChangeEvent<HTMLInputElement>) =>
-        setMany(e.target.checked);
-
     return (
-        <Flex color='white' mb='10'>
-            <Center mr='5'>
+        <Flex color='white' mb='5' justifyContent='space-around'>
+            <NSFWConfirm isOpen={isOpen}
+                onClose={() => { onClose(); setIsNSFW(false); }}
+                onConfirm={() => { onClose(); setIsNSFW(true); }} />
+            <Stack mr='5' width='25%'>
                 <FormControl>
-                    <FormLabel htmlFor='country'>Tags</FormLabel>
-                    <Select ref={tagRef} id='country'
-                        placeholder='Select country'
-                        onChange={onSelectTag}>
-                        <option value='UAE'>United Arab Emirates</option>
-                        <option value='NI'>Nigeria</option>
-                    </Select>
+                    <FormLabel htmlFor='tags'>Tags</FormLabel>
+                    <Select<IOption, true, GroupBase<IOption>>
+                        isMulti
+                        id='tags'
+                        options={groupedTags}
+                        placeholder="-- Select Tag --"
+                        closeMenuOnSelect={false}
+                        selectedOptionStyle="check"
+                        hideSelectedOptions={false}
+                        onChange={onSelectTag}
+                    />
                 </FormControl>
-            </Center>
-            <Center mr='5'>
+            </Stack>
+            <Center mr='5' width='25%'>
                 <FormControl>
                     <FormLabel htmlFor='orientation'>Orientation</FormLabel>
-                    <Select ref={orientationRef} id='orientation'
+                    <SingleSelect ref={orientationRef} id='orientation'
                         onChange={onSelectOrientation}>
                         <option>-- Select Orientation --</option>
                         <option value='LANDSCAPE'>Landscape</option>
                         <option value='PORTRAIT'>Portrait</option>
-                    </Select>
+                    </SingleSelect>
                 </FormControl>
             </Center>
-            <Stack spacing={5} pt='5' direction='row'>
-                <Checkbox onChange={onCheckedNSFW} colorScheme='red'>NSFW</Checkbox>
-                <Checkbox onChange={onCheckedGIF}>GIFs</Checkbox>
-                <Checkbox onChange={onCheckedMany}>Many</Checkbox>
+            <Stack spacing={5} pt='5' direction='row' width='25%'>
+                <Checkbox
+                    onChange={(e) => {
+                        e.currentTarget.checked ? onOpen() : setIsNSFW(false);
+                    }}
+                    colorScheme='red'
+                    isChecked={isNSFW}>NSFW</Checkbox>
+                <Checkbox onChange={(e) => setIsGIF(e.target.checked)}>GIFs</Checkbox>
+                <Checkbox onChange={(e) => setMany(e.target.checked)}>Many</Checkbox>
             </Stack>
         </Flex>
     );

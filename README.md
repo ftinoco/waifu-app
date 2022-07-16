@@ -5,4 +5,5 @@ I trying to implement functional programming, using provider and contexts.
 
 
 ### Inspired 
-Based on [Forever Functional: Structuring a React project functionally](https://blog.openreplay.com/forever-functional-structuring-a-react-project-functionally)
+- Based on [Forever Functional: Structuring a React project functionally](https://blog.openreplay.com/forever-functional-structuring-a-react-project-functionally)
+- [chakra-react-select](https://github.com/csandman/chakra-react-select) has been used for this project.

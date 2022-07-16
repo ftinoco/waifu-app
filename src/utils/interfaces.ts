@@ -29,8 +29,24 @@ export interface ITag {
     is_nsfw: boolean;
 }
 
+export interface ITagResponse{
+    versatile: string[];
+    nsfw: string[];
+}
+
+export interface IGroupedOptions{
+    label: string;
+    options: IOption[];
+}
+
+export interface IOption{
+    value: string;
+    label:string;
+}
+
 export interface IServiceContextProps {
     getRandomImage: (props: IFilterProps) => Promise<IImage[]>;
+    getTags: (isNSFW: boolean) => Promise<IGroupedOptions[]>;
 }
 
 export interface IFilterProps {

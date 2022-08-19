@@ -1,16 +1,14 @@
 import {
-    ChangeEvent,
-    Dispatch,
     MutableRefObject,
-    SetStateAction,
     useContext,
     useEffect,
     useRef,
     useState
 } from "react";
 import {
+    Box,
     Center,
-    Checkbox, Flex,
+    Checkbox, 
     FormControl,
     FormLabel,
     Stack,
@@ -52,11 +50,16 @@ export const Filter = () => {
         setOrientation(orientationRef.current.value as OrientationType);
 
     return (
-        <Flex color='white' mb='5' justifyContent='space-around'>
+        <Box p={4} display={{ md: 'flex' }}>
             <NSFWConfirm isOpen={isOpen}
                 onClose={() => { onClose(); setIsNSFW(false); }}
                 onConfirm={() => { onClose(); setIsNSFW(true); }} />
-            <Stack mr='5' width='25%'>
+            <Stack mr='5' width={[
+                '100%', // 0-30em
+                '50%', // 30em-48em
+                '30%', // 48em-62em
+                '20%', // 62em+
+            ]}>
                 <FormControl>
                     <FormLabel htmlFor='tags'>Tags</FormLabel>
                     <Select<IOption, true, GroupBase<IOption>>
@@ -71,7 +74,12 @@ export const Filter = () => {
                     />
                 </FormControl>
             </Stack>
-            <Center mr='5' width='25%'>
+            <Center mr='5' width={[
+                '100%', // 0-30em
+                '50%', // 30em-48em
+                '30%', // 48em-62em
+                '20%', // 62em+
+            ]}>
                 <FormControl>
                     <FormLabel htmlFor='orientation'>Orientation</FormLabel>
                     <SingleSelect ref={orientationRef} id='orientation'
@@ -92,6 +100,6 @@ export const Filter = () => {
                 <Checkbox onChange={(e) => setIsGIF(e.target.checked)}>GIFs</Checkbox>
                 <Checkbox onChange={(e) => setMany(e.target.checked)}>Many</Checkbox>
             </Stack>
-        </Flex>
+        </Box>
     );
 } 
